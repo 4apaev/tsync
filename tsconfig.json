@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "ES2022",
+    "target": "ES2022",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    // "removeComments": true,
+    "declaration": true,
+    "pretty": true,
+  },
+
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "test/**/*",
+    "scripts/**/*"
+  ],
+}

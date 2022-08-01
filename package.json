@@ -1,0 +1,32 @@
+{
+         "name": "tsync",
+       "author": "Michael Miretsky",
+      "version": "1.0.0",
+      "license": "ISC",
+  "description": "http util",
+         "type": "module",
+         "types": ".dist/types",
+        "files": [
+    "dist/base.js",
+    "dist/fetch.js",
+    "dist/sync.js",
+    "dist/util.js"
+  ],
+  "repository": {
+    "type": "git",
+     "url": "git@github.com:4apaev/tsync.git"
+  },
+  "scripts": {
+     "test": "c8 --check-coverage mocha",
+     "lint": "eslint --fix dist",
+    "mocha": "mocha ./test/*.spec.js",
+    "build": "sh scripts/build.sh"
+  },
+  "devDependencies": {
+             "c8": "^7.12.0",
+          "mocha": "^10.0.0",
+         "eslint": "^8.21.0",
+     "typescript": "^4.7.4",
+    "@types/node": "^18.6.3"
+  }
+}
