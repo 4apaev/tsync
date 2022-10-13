@@ -1,4 +1,4 @@
-import * as Uitl from './util.js'
+import { CL, CT, Len, get, each } from './util.js'
 export default class Base {
   static BASE = 'http://localhost:3000'
   static HEAD = new Headers
@@ -12,7 +12,7 @@ export default class Base {
     this.url = /^https?:/i.test(`${ url }`)
       ? new URL(url)
       : new URL(url ?? '/', Ctor.BASE)
-    Uitl.each(Ctor.HEAD, this.set, this)
+    each(Ctor.HEAD, this.set, this)
   }
 
   get headers() { return this.head }
@@ -20,7 +20,7 @@ export default class Base {
   get(k) { return this.head.get(k) ?? '' }
   set(k, v) {
     if (typeof k == 'object')
-      Uitl.each(k, this.set, this)
+      each(k, this.set, this)
     else
       this.head.set(k, `${ v }`)
     return this
@@ -30,7 +30,7 @@ export default class Base {
     if (k == null)
       return this
     if (typeof k == 'object')
-      Uitl.each(k, this.query, this)
+      each(k, this.query, this)
     else
       this.url.searchParams[ this.url.searchParams.has(k) ? 'append' : 'set' ](k, `${ v }`)
     return this
@@ -46,14 +46,14 @@ export default class Base {
     else {
       this.body = `${ body }`
     }
-    this.get(Uitl.CL) || this.set(Uitl.CL, Uitl.Len(this.body))
+    this.get(CL) || this.set(CL, Len(this.body))
     return this
   }
 
   type(alias) {
     return typeof alias == 'string'
-      ? this.set(Uitl.CT, Uitl.get(alias))
-      : this.get(Uitl.CT)
+      ? this.set(CT, get(alias))
+      : this.get(CT)
   }
 
   async then(done, fail) {

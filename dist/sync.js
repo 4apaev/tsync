@@ -4,9 +4,12 @@ import { Readable } from 'stream'
 import Base from './base.js'
 import * as Util from './util.js'
 export default class Sync extends Base {
-  static canRead = Readable[ Symbol.hasInstance ].bind(Readable)
+  static isReadable(x) {
+    return Readable[ Symbol.hasInstance ](x)
+  }
+
   send(body) {
-    if (Sync.canRead(body)) {
+    if (Sync.isReadable(body)) {
       this.body = body
       return this
     }
@@ -24,7 +27,7 @@ export default class Sync extends Base {
       const opt = { method, headers }
       const req = agent.request(url, opt, done)
       req.once('error', fail)
-      return Sync.canRead(body)
+      return Sync.isReadable(body)
         ? body.pipe(req)
         : req.end(body)
     })
