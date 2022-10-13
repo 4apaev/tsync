@@ -20,7 +20,7 @@
      "test": "c8 --check-coverage mocha",
      "lint": "eslint --fix dist",
     "mocha": "mocha ./test/*.spec.js",
-    "build": "sh scripts/build.sh"
+    "build": "rm -rf dist; tsc && eslint --fix dist"
   },
   "devDependencies": {
              "c8": "^7.12.0",
