@@ -11,10 +11,12 @@ import * as Util from './util.js'
 
 export default class Sync extends Base {
 
-  public static canRead = Readable[ Symbol.hasInstance ].bind(Readable)
+  public static isReadable(x: any): boolean {
+    return Readable[ Symbol.hasInstance ](x)
+  }
 
   send(body: any): this {
-    if (Sync.canRead(body)) {
+    if (Sync.isReadable(body)) {
       this.body = body
       return this
     }
@@ -36,7 +38,7 @@ export default class Sync extends Base {
 
       req.once('error', fail)
 
-      return Sync.canRead(body)
+      return Sync.isReadable(body)
         ? body.pipe(req)
         : req.end(body)
     })
