@@ -70,5 +70,4 @@ export default class Sync extends Base {
       ? Promise.reject(payload)
       : payload
   }
-
 }
