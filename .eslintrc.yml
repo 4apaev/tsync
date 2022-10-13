@@ -48,12 +48,12 @@ rules:
 
   no-cond-assign: off
 
-  no-unused-vars: off
-    # - error
-    # - args: after-used
-    #   caughtErrors: none
-    #   argsIgnorePattern: ^_
-    #   varsIgnorePattern: ^_
+  no-unused-vars:
+    - error
+    - args: after-used
+      caughtErrors: none
+      argsIgnorePattern: ^_
+      varsIgnorePattern: ^_
 
   block-scoped-var: error
   func-name-matching: error
