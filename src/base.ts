@@ -6,7 +6,6 @@ import {
   Done,
   Fail,
 } from '.'
-
 import * as Uitl from './util.js'
 
 export default abstract class Base implements IBase {
@@ -21,7 +20,6 @@ export default abstract class Base implements IBase {
 
   constructor(method: Method, url?: string | URL) {
     const Ctor = <typeof Base>this.constructor
-
     this.method = method || 'get'
     this.url = /^https?:/i.test(`${ url }`)
       ? new URL(url)
@@ -30,7 +28,6 @@ export default abstract class Base implements IBase {
   }
 
   get headers(): Headers { return this.head }
-
 
   has(k: string): boolean { return this.head.has(k) }
   get(k: string): string { return this.head.get(k) ?? '' }
@@ -99,4 +96,3 @@ export default abstract class Base implements IBase {
   static post(url: string | URL, body?: any) { return Reflect.construct(this, [ 'post', url ]).send(body) }
   static del(url: string | URL, body?: any) { return Reflect.construct(this, [ 'delete', url ]).send(body) }
 }
-

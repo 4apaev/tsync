@@ -1,6 +1,5 @@
 import { IPayload } from '.'
 import Base from './base.js'
-
 import * as Util from './util.js'
 
 export default class Fetch extends Base {
@@ -31,5 +30,4 @@ export default class Fetch extends Base {
       ? payload
       : Promise.reject(payload)
   }
-
 }

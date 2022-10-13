@@ -8,7 +8,6 @@ export const CT: string = 'Content-Type'
 export const CL: string = 'Content-Length'
 export const isNODE: boolean = globalThis?.process?.versions?.node != µ
 
-
 export const mime: { [ k: string ]: string } = Object.create(null)
 
 export function get(alias: string): string {
@@ -47,7 +46,6 @@ export function is(expected: string, actual: string | Headers | Dict): boolean {
   return e.startsWith(a)
 }
 
-
 export function each<T>(it: Dict | Headers | URLSearchParams, cb: Each, ctx?: T): T {
   for (const [ k, v ] of Symbol.iterator in it ? it.entries() : Object.entries(it))
     cb.call(ctx, k, v)
@@ -58,7 +56,6 @@ export const Len = isNODE
   ? (x: string): number => Buffer.byteLength(x)
   /* c8 ignore next */
   : (x: string): number => x.length
-
 
 mime.txt = 'text/plain'
 mime.html = 'text/html'
@@ -95,7 +92,6 @@ mime.img = 'application/octet-stream'
 mime.form = 'multipart/form-data'
 mime.query = 'application/x-www-form-urlencoded'
 
-
 export const { // eslint-disable-next-line max-len
   txt, css, less, csv, jsx, md, yaml, yml, xml,
   gif, png, jpg, jpeg, svg, svgz, ico,
@@ -103,7 +99,3 @@ export const { // eslint-disable-next-line max-len
   zip, tar, json, js, bin, dmg, iso,
   img, form, query,
 } = mime
-
-
-
-  // <T extends It | Dict>
