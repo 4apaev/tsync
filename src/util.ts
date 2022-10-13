@@ -92,7 +92,7 @@ mime.img = 'application/octet-stream'
 mime.form = 'multipart/form-data'
 mime.query = 'application/x-www-form-urlencoded'
 
-export const {
+export const { // eslint-disable-next-line max-len
   txt, css, less, csv, jsx, md, yaml, yml, xml,
   gif, png, jpg, jpeg, svg, svgz, ico,
   webp, woff, otf, bdf, pcf, snf, ttf,
