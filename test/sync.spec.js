@@ -5,7 +5,7 @@ import {
 } from 'assert'
 import { Readable } from 'stream'
 
-import Sync from '../dist/sync.js'
+import Sync from '../src/sync.js'
 import Server, {
   sleep,
   random,
@@ -128,7 +128,9 @@ describe('Sync', () => {
     })
 
     it('should set content-type to json', async () => {
-      const re = await Sync.get('/api').type('json')
+      const rq = Sync.get('/api').type('json')
+      const re = await rq
+
       equal(re.code, 200)
       equal(re.body.url, '/api')
       equal(re.body.body, '')
@@ -175,7 +177,7 @@ describe('Sync', () => {
     const body = 'SHOSHANA!'
     const readable = Readable.from((async function* (it, i = 10) {
       for (const ch of it)
-        yield await claim(ch, random(i += 10))
+        yield await sleep(ch, random(i += 10))
     })(body))
 
     const re = await Sync.post('/', readable)
@@ -184,4 +186,3 @@ describe('Sync', () => {
 
   })
 })
-
