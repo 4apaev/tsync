@@ -1,9 +1,12 @@
-import {
-  createServer,
-} from 'http'
+import Http from 'http'
 
-export default createServer(handler)
+export default Http.createServer(handler)
 
+/**
+ * @param {Http.IncomingMessage} rq
+ * @param {Http.ServerResponse} rs
+ * @returns
+ */
 async function handler(rq, rs) {
   rs.statusCode = 200
   rq.setEncoding('utf8')
@@ -42,7 +45,6 @@ export function random(a, b, r = +random) {
 }
 random.valueOf = Math.random
 
-export function claim(x, ms) {
-  return new Promise(ok =>
-    setTimeout(ok, ms, x))
+export function sleep(x, ms) {
+  return new Promise(ok => setTimeout(ok, ms, x))
 }

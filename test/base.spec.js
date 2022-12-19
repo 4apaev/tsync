@@ -3,7 +3,7 @@ import {
   rejects,
   deepStrictEqual as eqDeep,
 } from 'assert'
-import Base from '../dist/base.js'
+import Base from '../src/base.js'
 
 describe('Base', () => {
   Base.BASE = 'http://0.0.0.0/'
@@ -32,11 +32,37 @@ describe('Base', () => {
 
     it('should use base url and path', () => {
       const u = 'api'
-      equal(Base.put(u).url.toString(), Base.BASE + u)
+      equal(Base.BASE + u, Base.put(u).url.toString())
+    })
+  })
+
+  describe('Base constructor', () => {
+    it('should send body or query params', () => {
+      const body = { a: 1, b: 2 }
+      const str = JSON.stringify(body)
+
+      let rq = new Base('post', '/', body)
+
+      equal('post', rq.method)
+      equal('application/json', rq.type())
+      equal(str, rq.body)
+
+
+      rq = new Base('get', '/', body)
+
+      equal('get', rq.method)
+      equal('', rq.type())
+      equal('?a=1&b=2', rq.url.search)
     })
   })
 
   describe('Base.headers', () => {
+    it('should return this', () => {
+      const rq = Base.get()
+      equal(rq, rq.set())
+      eqDeep({}, Object.fromEntries(rq.head))
+    })
+
     it('should return headers as object', () => {
       const hd = { a: 'b', c: 'd' }
       const rq = Base.put().set(hd)
@@ -125,12 +151,11 @@ describe('Base', () => {
 
     it('should set query params as object', () => {
       const rq = Base.get()
+      rq.query({ a: 1, b: [ 2, 3 ]})
+      equal('?a=1&b=2&b=3', rq.url.search)
 
-      rq.query({ a: 'b' })
-      equal(rq.url.search, '?a=b')
-
-      rq.query({ c: 'd' })
-      equal(rq.url.search, '?a=b&c=d')
+      rq.query({ c: 4 })
+      equal('?a=1&b=2&b=3&c=4', rq.url.search)
     })
 
     it('should append query params', () => {

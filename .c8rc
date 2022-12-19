@@ -10,18 +10,17 @@
   ],
 
   "include": [
-    "dist/**/*.js"
+    "src/**/*.js"
   ],
 
   "exclude": [
-    "src/**",
     "test/**",
-    "coverage/**",
     "scripts/**"
   ],
 
   "clean": true,
   "per-file": true,
   "check-coverage": true,
-  "temp-directory": ".c8_temp"
+  "temp-directory": ".c8tmp",
+  "report-dir":    ".c8reports"
 }

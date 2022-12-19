@@ -1,32 +1,27 @@
 {
-         "name": "tsync",
-       "author": "Michael Miretsky",
-      "version": "1.0.0",
-      "license": "ISC",
-  "description": "http util",
-         "type": "module",
-         "types": ".dist/types",
-        "files": [
-    "dist/base.js",
-    "dist/fetch.js",
-    "dist/sync.js",
-    "dist/util.js"
-  ],
-  "repository": {
-    "type": "git",
-     "url": "git@github.com:4apaev/tsync.git"
-  },
+  "name"    : "tsync",
+  "author"  : "Michael Miretsky",
+  "version" : "2.0.1",
+  "type"    : "module",
+  "files"   : [
+      "src/base.js",
+      "src/fetch.js",
+      "src/sync.js",
+      "src/util.js"
+    ],
+  "repository": { "type": "git", "url": "git@github.com:4apaev/tsync.git" },
   "scripts": {
-     "test": "c8 --check-coverage mocha",
-     "lint": "eslint --fix dist",
-    "mocha": "mocha ./test/*.spec.js",
-    "build": "rm -rf dist; tsc && eslint --fix dist"
+    "build"  : "rm -rf dist; tsc && npm run lint",
+    "mocha"  : "mocha test/*.spec.js",
+    "test"   : "c8 --check-coverage mocha",
+    "lint"   : "eslint --fix dist",
+    "clear"  : "rm -rf dist"
+
   },
   "devDependencies": {
              "c8": "^7.12.0",
-          "mocha": "^10.0.0",
-         "eslint": "^8.25.0",
-     "typescript": "^4.8.4",
-    "@types/node": "^18.8.5"
+          "mocha": "^10.2.0",
+         "eslint": "^8.30.0",
+    "@types/node": "^18.11.16"
   }
 }

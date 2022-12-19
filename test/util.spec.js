@@ -1,10 +1,6 @@
-/* eslint-disable no-unused-vars */
-
 import { deepStrictEqual as equal } from 'assert'
+import * as Util from '../src/util.js'
 
-import * as Util from '../dist/util.js'
-
-const Log = console.log
 
 describe('Mim', () => {
 
@@ -24,8 +20,8 @@ describe('Mim', () => {
       equal(v, Util.mime[ k ], `Mim.mime[ ${ k } ]`)
     })
 
-    it('CL', () => equal(Util.CL, 'Content-Length'))
-    it('CT', () => equal(Util.CT, 'Content-Type'))
+    it('CL', () => equal(Util.CL, 'content-length'))
+    it('CT', () => equal(Util.CT, 'content-type'))
 
     mimeIt('txt', 'text/plain')
     mimeIt('css', 'text/css')
@@ -125,6 +121,44 @@ describe('Mim', () => {
       equal(false, Util.is(png, new Headers([[ Util.CT, gif ]])))
       equal(false, Util.is('xxx', new Headers([[ Util.CT, gif ]])))
       equal(false, Util.is('xxx', new Headers([[ Util.CT, 'yyy' ]])))
+    })
+  })
+
+  describe('each', () => {
+    const cb = function (k, v) { this.push(k + v) }
+    const tuple = [
+      [ 'a', 'b' ],
+      [ 'c', 'd' ],
+    ]
+
+    it('dict', () => {
+      const ctx = []
+      equal(ctx, Util.each(new Map(tuple), cb, ctx))
+      equal('abcd', ctx.join(''))
+    })
+
+    it('headers', () => {
+      const ctx = []
+      equal(ctx, Util.each(new Headers(tuple), cb, ctx))
+      equal('abcd', ctx.join(''))
+    })
+
+    it('url search params', () => {
+      const ctx = []
+      equal(ctx, Util.each(new URLSearchParams(tuple), cb, ctx))
+      equal('abcd', ctx.join(''))
+    })
+
+    it('map', () => {
+      const ctx = []
+      equal(ctx, Util.each(Object.fromEntries(tuple), cb, ctx))
+      equal('abcd', ctx.join(''))
+    })
+
+    it('array', () => {
+      const ctx = []
+      equal(ctx, Util.each(tuple.flat(), cb, ctx))
+      equal('0a1b2c3d', ctx.join(''))
     })
   })
 
