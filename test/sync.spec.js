@@ -7,7 +7,7 @@ import { Readable } from 'stream'
 
 import Sync from '../dist/sync.js'
 import Server, {
-  claim,
+  sleep,
   random,
 } from '../scripts/test-util.js'
 
