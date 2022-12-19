@@ -1,10 +1,10 @@
 {
   "folders": [
-    { "name": "🧵🪢🧵 tsync", "path": ".." },
+    { "name": "🪢 tsync", "path": ".." },
   ],
 
   "settings": {
-    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.enabled": false,
     "explorer.fileNesting.patterns": {
       "docker-compose.yml": "docker-compose.*, dockerfile*, nginx.conf, .env",
     },

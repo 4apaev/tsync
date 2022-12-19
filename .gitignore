@@ -1,5 +1,10 @@
 .DS_Store
 .idea
-.c8_temp
+.fleet
+
 node_modules
-coverage
+.c8*/
+
+# .c8temp
+# .c8reports
+
