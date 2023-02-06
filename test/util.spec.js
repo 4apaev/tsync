@@ -7,21 +7,20 @@ describe('Mim', () => {
   const ext = 'png'
   const type = 'image/png'
 
-  const pOk = '/path/to/img.' + ext
-  const uOk = new URL('file:/' + pOk)
+  describe('get', () => {
+    const yml = 'text/yaml'
 
-  const pNope = '/path/to/xxx'
-  const uNope = new URL('file:/' + pNope)
+    it('by alias', () => equal(yml,  Util.get('yml')))
+    it('by alias', () => equal(yml,  Util.get('yaml')))
+    it('by mime type', () => equal(yml,  Util.get(yml)))
+    it('by fallback', () => equal(yml,  Util.get('xxx', yml)))
+  })
 
-  describe('get & exports', () => {
+  describe('exports', () => {
     const mimeIt = (k, v) => it(`get mime.${ k }`, () => {
       equal(v, Util.get(k), `Mim.get(${ k })`)
-      equal(v, Util[ k ], `Mim[ ${ k } ]`)
       equal(v, Util.mime[ k ], `Mim.mime[ ${ k } ]`)
     })
-
-    it('CL', () => equal(Util.CL, 'content-length'))
-    it('CT', () => equal(Util.CT, 'content-type'))
 
     mimeIt('txt', 'text/plain')
     mimeIt('css', 'text/css')
@@ -59,11 +58,11 @@ describe('Mim', () => {
   })
 
   describe('extname', () => {
-    it('[ URL ]  should return correct extension', () => equal(ext, Util.extname(pOk)))
-    it('[ PATH ] should return correct extension', () => equal(ext, Util.extname(uOk)))
+    it('[ URL ]  should return correct extension', () => equal(ext, Util.extname('/path/to/file.' + ext)))
+    it('[ PATH ] should return correct extension', () => equal(ext, Util.extname(new URL('file://path/to/file.' + ext))))
 
-    it('[ URL ]  should return empty string if extension dont exist', () => equal('', Util.extname(pNope)))
-    it('[ PATH ] should return empty string if extension dont exist', () => equal('', Util.extname(uNope)))
+    it('[ URL ]  should return empty string if extension dont exist', () => equal('', Util.extname('xxx')))
+    it('[ PATH ] should return empty string if extension dont exist', () => equal('', Util.extname(new URL('file://xxx'))))
   })
 
   describe('Len', () => {
@@ -71,56 +70,73 @@ describe('Mim', () => {
   })
 
   describe('fromPath', () => {
-    it('[ URL ]  should return correct type', () => equal(type, Util.fromPath(pOk)))
-    it('[ PATH ] should return correct type', () => equal(type, Util.fromPath(uOk)))
+    it('[ URL  ] should return correct type', () => equal(type, Util.fromPath('/path/to/file.png')))
+    it('[ PATH ] should return correct type', () => equal(type, Util.fromPath(new URL('file://path/to/file.png'))))
 
-    it('[ URL ]  should return empty string if type dont exist', () => equal('', Util.fromPath(pNope)))
-    it('[ PATH ] should return empty string if type dont exist', () => equal('', Util.fromPath(uNope)))
+    it('[ URL  ] should return empty string if type dont exist', () => equal('', Util.fromPath('/path/to/some.ext')))
+    it('[ PATH ] should return empty string if type dont exist', () => equal('', Util.fromPath(new URL('file://path/to/xxx'))))
+
+    it('[ URL  ] should return fallback if type dont exist', () => equal(type, Util.fromPath('/path/xxxx', type)))
+    it('[ PATH ] should return fallback if type dont exist', () => equal(type, Util.fromPath(new URL('file://xxx'), type)))
   })
 
   describe('fromHead', () => {
 
-    const oup = { 'Content-Type': type }
-    const olw = { 'content-type': type }
+    const objUpper = { 'Content-Type': type }
+    const objLower = { 'content-type': type }
 
-    const hup = new Headers(oup)
-    const hlw = new Headers(olw)
+    const headUpper = new Headers(objUpper)
+    const headLower = new Headers(objLower)
 
-    it('[ OBJECT: lower case ] should return correct type', () => equal(type, Util.fromHead(oup)))
-    it('[ OBJECT: lower case ] should return correct type', () => equal(type, Util.fromHead(olw)))
+    it('[ OBJECT: upper case ] should return correct type', () => equal(type, Util.fromHead(objUpper)))
+    it('[ OBJECT: lower case ] should return correct type', () => equal(type, Util.fromHead(objLower)))
+
     it('[ OBJECT ] should return empty string if type dont exist', () => equal('', Util.fromHead({})))
+    it('[ OBJECT ] should return fallback if type dont exist', () => equal(type, Util.fromHead({}, type)))
 
-    it('[ HEADER ] should return correct type', () => equal(type, Util.fromHead(hup)))
-    it('[ HEADER ] should return correct type', () => equal(type, Util.fromHead(hlw)))
+    it('[ HEADER ] should return correct type', () => equal(type, Util.fromHead(headUpper)))
+    it('[ HEADER ] should return correct type', () => equal(type, Util.fromHead(headLower)))
     it('[ HEADER ] should return empty string if type dont exist', () => equal('', Util.fromHead(new Headers)))
+    it('[ HEADER ] should return fallback if type dont exist', () => equal(type, Util.fromHead(new Headers, type)))
   })
 
   describe('is', () => {
-    const png = Util.png
-    const gif = Util.gif
+    const png = Util.mime.png
+    const gif = Util.mime.gif
+    const CT = 'content-type'
+
+    it('nada', () => {
+      equal(false,  Util.is())
+      equal(false,  Util.is(''))
+      equal(false,  Util.is({}))
+      equal(false,  Util.is(new Headers))
+    })
 
     it('string', () => {
       equal(true,  Util.is('png', png))
-      equal(true,  Util.is(png, png))
-      equal(false, Util.is(png, gif))
+      equal(true,  Util.is(png,   png))
+
+      equal(false, Util.is(png,   gif))
       equal(false, Util.is('xxx', gif))
       equal(false, Util.is('xxx', 'yyy'))
     })
 
     it('object', () => {
-      equal(true,  Util.is('png', { [ Util.CT ]: png }))
-      equal(true,  Util.is(png, { [ Util.CT ]: png }))
-      equal(false, Util.is(png, { [ Util.CT ]: gif }))
-      equal(false, Util.is('xxx', { [ Util.CT ]: gif }))
-      equal(false, Util.is('xxx', { [ Util.CT ]: 'yyy' }))
+      equal(true,  Util.is('png', { [ CT ]: png }))
+      equal(true,  Util.is(png,   { [ CT ]: png }))
+
+      equal(false, Util.is(png,   { [ CT ]: gif }))
+      equal(false, Util.is('xxx', { [ CT ]: gif }))
+      equal(false, Util.is('xxx', { [ CT ]: 'yyy' }))
     })
 
     it('headers', () => {
-      equal(true,  Util.is('png', new Headers([[ Util.CT, png ]])))
-      equal(true,  Util.is(png, new Headers([[ Util.CT, png ]])))
-      equal(false, Util.is(png, new Headers([[ Util.CT, gif ]])))
-      equal(false, Util.is('xxx', new Headers([[ Util.CT, gif ]])))
-      equal(false, Util.is('xxx', new Headers([[ Util.CT, 'yyy' ]])))
+      equal(true,  Util.is('png', new Headers([[ CT, png ]])))
+      equal(true,  Util.is(png,   new Headers([[ CT, png ]])))
+
+      equal(false, Util.is(png,   new Headers([[ CT, gif ]])))
+      equal(false, Util.is('xxx', new Headers([[ CT, gif ]])))
+      equal(false, Util.is('xxx', new Headers([[ CT, 'yyy' ]])))
     })
   })
 
