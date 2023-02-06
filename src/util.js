@@ -1,7 +1,8 @@
 // @ts-check
 
-export const CT = 'content-type'
-export const CL = 'content-length'
+const CT = 'Content-Type'
+const ct = 'content-type'
+
 export const mime = Object.create(null)
 
 export const Len = globalThis?.Buffer != null
@@ -10,28 +11,35 @@ export const Len = globalThis?.Buffer != null
 
 /**
  * @param  { string } s
+ * @param  { string } [fallback]
  * @return { string }
  */
-export function get(s) {
-  return mime[ s ] ?? s
+export function get(s, fallback) {
+  return mime[ s ] ?? fallback
 }
 
 /**
- * @param  { Headers | Dict } ctx
+ * @param  { Head } ctx
+ * @param  { string } [fallback]
  * @return { string }
  */
-export function fromHead(ctx) {
-  return (ctx instanceof Headers
-    ? ctx.get('Content-Type') ?? ctx.get('content-type')
-    : ctx?.[ 'Content-Type' ] ?? ctx?.[ 'content-type' ]) ?? ''
+export function fromHead(ctx, fallback) {
+  const re = typeof ctx?.get == 'function'
+    ? ctx.get(CT) ?? ctx.get(ct)
+    : ctx?.[ CT ] ?? ctx?.[ ct ]
+  return re ?? fallback ?? ''
 }
 
 /**
- * @param  { string } s
+ * @param  { string | URL } s
+ * @param  { string } [fallback]
  * @return { string }
  */
-export function fromPath(s) {
-  return get(extname(s))
+export function fromPath(s, fallback) {
+  const ex = extname(s)
+  return ex
+    ? get(ex, fallback) ?? ''
+    : fallback ?? ''
 }
 
 /**
@@ -53,13 +61,16 @@ export function extname(file) {
 
 /**
  * @param  { string } expected
- * @param  { string | Headers | Dict } actual
+ * @param  { string | Head } actual
  * @return { boolean }
  */
 export function is(expected, actual) {
-  const e = get(expected) || expected
+  if (actual == null)
+    return false
+
+  const e = get(expected, expected)
   const a = typeof actual == 'string'
-    ? get(actual) || actual
+    ? get(actual, actual)
     : fromHead(actual)
   return e.startsWith(a)
 }
@@ -74,57 +85,61 @@ export function is(expected, actual) {
  * @returns { C }
  */
 export function each(it, cb, ctx) {
+                         // @ts-ignore
   for (const [ k, v ] of it?.entries?.() ?? Object.entries(it))
     cb.call(ctx, k, v)
   return ctx
 }
 
+/** @type { typeof String.raw } */
+export function populate(s, ...a) {
+  for (let line of String.raw(s, ...a).split('\n')) {
+    let [ mtype, ...exts ] = line.match(/\S+/g) ?? []
+    if (mtype) {
+      mime[ mtype ] = mtype
+      for (let ex of exts)
+        mime[ ex ] = mtype
+    }
+  }
+  return ''
+}
+
+populate`
+  text/event-stream                  sse
+  text/plain                         txt
+  text/html                          html
+  text/css                           css
+  text/less                          less
+  text/csv                           csv
+  text/jsx                           jsx
+  text/x-markdown                    md
+  text/csv                           csv
+  text/jsx                           jsx
+  text/yaml                          yml yaml
+  text/xml                           xml
+  image/gif                          gif
+  image/png                          png
+  image/jpeg                         jpg jpeg
+  image/webp                         webp
+  image/svg+xml                      svg svgz
+  image/x-icon                       ico
+  font/woff                          woff
+  font/opentype                      otf
+  application/zip                    zip
+  application/zip                    tar
+  application/x-font-bdf             bdf
+  application/x-font-pcf             pcf
+  application/x-font-snf             snf
+  application/x-font-ttf             ttf
+  application/octet-stream           bin dmg iso img
+  application/x-www-form-urlencoded  query
+  application/javascript             js
+  application/json                   json
+  multipart/form-data                form
+`
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** @typedef {{[ k: PropertyKey ]: any }} Dict */
+/** @typedef { import('http').IncomingHttpHeaders | Headers | Dict | Map } Head */
 /** @typedef {(string | NodeJS.ArrayBufferView | ArrayBuffer | SharedArrayBuffer)} Buff */
-/** typedef {Iterable<T> | Record<string, T> | { entries?: () => IterableIterator<[string, T]> }} Tuple */
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-mime.txt   = 'text/plain'
-mime.html  = 'text/html'
-mime.css   = 'text/css'
-mime.less  = 'text/less'
-mime.csv   = 'text/csv'
-mime.jsx   = 'text/jsx'
-mime.md    = 'text/x-markdown'
-mime.yaml  = 'text/yaml'
-mime.yml   = 'text/yaml'
-mime.xml   = 'text/xml'
-mime.gif   = 'image/gif'
-mime.png   = 'image/png'
-mime.jpg   = 'image/jpeg'
-mime.jpeg  = 'image/jpeg'
-mime.svg   = 'image/svg+xml'
-mime.svgz  = 'image/svg+xml'
-mime.ico   = 'image/x-icon'
-mime.webp  = 'image/webp'
-mime.woff  = 'font/woff'
-mime.otf   = 'font/opentype'
-mime.bdf   = 'application/x-font-bdf'
-mime.pcf   = 'application/x-font-pcf'
-mime.snf   = 'application/x-font-snf'
-mime.ttf   = 'application/x-font-ttf'
-mime.zip   = 'application/zip'
-mime.tar   = 'application/zip'
-mime.json  = 'application/json'
-mime.js    = 'application/javascript'
-mime.bin   = 'application/octet-stream'
-mime.dmg   = 'application/octet-stream'
-mime.iso   = 'application/octet-stream'
-mime.img   = 'application/octet-stream'
-mime.form  = 'multipart/form-data'
-mime.query = 'application/x-www-form-urlencoded'
-export const {
-  txt, css, less, csv, jsx, md, yaml, yml,
-  xml, gif, png, jpg, jpeg, svg, svgz, ico,
-  webp, woff, otf, bdf, pcf, snf, ttf, zip,
-  tar, json, js, bin, dmg,
-  iso, img, form, query,
-} = mime
