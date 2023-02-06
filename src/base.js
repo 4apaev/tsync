@@ -101,7 +101,7 @@ export default class Base {
     if (typeof body == 'object') {
 
       // this.type() || this.type('application/json')
-      this.type() || this.type(U.json)
+      this.type() || this.type(U.mime.json)
       this.body = JSON.stringify(body)
     }
     else {
