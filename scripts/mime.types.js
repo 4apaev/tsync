@@ -21,7 +21,7 @@ const cwd = process.cwd()
 const MTLocal = Pt.join(cwd, '/scripts/mime.types')
 const MTApache = '/etc/apache2/mime.types'
 
-Fs.statSync(MTApache) && populate(Fs.readFileSync(MTApache, 'utf8'))
+Fs.existsSync(MTApache) && populate(Fs.readFileSync(MTApache, 'utf8'))
 populate(Fs.readFileSync(MTLocal, 'utf8'))
 
 Fs.writeFileSync(MTLocal + '.json',
