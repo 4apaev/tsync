@@ -1,10 +1,11 @@
 // @ts-check
 
+import { MT as mime } from '../scripts/mime.types.js'
+
 const CT = 'Content-Type'
 const ct = 'content-type'
 
-export const mime = Object.create(null)
-
+export { mime }
 export const Len = globalThis?.Buffer != null
   /* c8 ignore next */ ? (/** @type {Buff}   */ x) => Buffer.byteLength(x)
   /* c8 ignore next */ : (/** @type {string} */ x) => x.length
@@ -90,53 +91,6 @@ export function each(it, cb, ctx) {
     cb.call(ctx, k, v)
   return ctx
 }
-
-/** @type { typeof String.raw } */
-export function populate(s, ...a) {
-  for (let line of String.raw(s, ...a).split('\n')) {
-    let [ mtype, ...exts ] = line.match(/\S+/g) ?? []
-    if (mtype) {
-      mime[ mtype ] = mtype
-      for (let ex of exts)
-        mime[ ex ] = mtype
-    }
-  }
-  return ''
-}
-
-populate`
-  text/event-stream                  sse
-  text/plain                         txt
-  text/html                          html
-  text/css                           css
-  text/less                          less
-  text/csv                           csv
-  text/jsx                           jsx
-  text/x-markdown                    md
-  text/csv                           csv
-  text/jsx                           jsx
-  text/yaml                          yml yaml
-  text/xml                           xml
-  image/gif                          gif
-  image/png                          png
-  image/jpeg                         jpg jpeg
-  image/webp                         webp
-  image/svg+xml                      svg svgz
-  image/x-icon                       ico
-  font/woff                          woff
-  font/opentype                      otf
-  application/zip                    zip
-  application/zip                    tar
-  application/x-font-bdf             bdf
-  application/x-font-pcf             pcf
-  application/x-font-snf             snf
-  application/x-font-ttf             ttf
-  application/octet-stream           bin dmg iso img
-  application/x-www-form-urlencoded  query
-  application/javascript             js
-  application/json                   json
-  multipart/form-data                form
-`
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

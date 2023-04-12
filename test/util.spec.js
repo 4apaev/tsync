@@ -73,7 +73,7 @@ describe('Mim', () => {
     it('[ URL  ] should return correct type', () => equal(type, Util.fromPath('/path/to/file.png')))
     it('[ PATH ] should return correct type', () => equal(type, Util.fromPath(new URL('file://path/to/file.png'))))
 
-    it('[ URL  ] should return empty string if type dont exist', () => equal('', Util.fromPath('/path/to/some.ext')))
+    it('[ URL  ] should return empty string if type dont exist', () => equal('', Util.fromPath('/path/to/some.$$$')))
     it('[ PATH ] should return empty string if type dont exist', () => equal('', Util.fromPath(new URL('file://path/to/xxx'))))
 
     it('[ URL  ] should return fallback if type dont exist', () => equal(type, Util.fromPath('/path/xxxx', type)))
