@@ -2,6 +2,7 @@
 
 import Http from 'http'
 import Base from './base.js'
+import { Writable } from 'stream'
 
 export type Payload = import('./base.js').Payload
 
@@ -22,6 +23,12 @@ export default class Sync extends Base implements Base {
      * @return {this}
      */
     send(body: any): this
+
+    /**
+     * @param  {Writable | string} trg
+     * @return {this}
+     */
+    pipe(trg: Writable | string): this
 
     /**
      * @return {Promise<Http.IncomingMessage>}

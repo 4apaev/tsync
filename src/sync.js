@@ -1,6 +1,8 @@
+// @ts-check
+import Fs from 'fs'
 import Http from 'http'
 import Https from 'https'
-import { Readable } from 'stream'
+import Stream from 'stream'
 
 import Base from './base.js'
 import { is } from './util.js'
@@ -17,7 +19,7 @@ export default class Sync extends Base {
    * @return {boolean}
    */
   static isReadable(x) {
-    return Readable[ Symbol.hasInstance ](x)
+    return Stream.Readable[ Symbol.hasInstance ](x)
   }
 
   /**
@@ -52,6 +54,18 @@ export default class Sync extends Base {
   }
 
   /**
+   * @param  {Stream.Writable|string} trg
+   * @return {this}
+   */
+  pipe(trg) {
+    if (typeof trg == 'string')
+      this.pipeTo = Fs.createWriteStream(trg)
+    else
+      this.pipeTo = trg
+    return this
+  }
+
+  /**
    * @param  {Http.IncomingMessage} rs
    * @return {Promise<Payload>}
    */
@@ -61,13 +75,17 @@ export default class Sync extends Base {
     /** @type { Payload } */
     const pay = {
       ok: rs.statusCode < 400,
-      code: rs.statusCode,
-      headers: rs.headers,
+      code: rs.statusCode,  // @ts-ignore
+      headers: new Headers(rs.headers),
       body: '',
     }
 
+    const write = this.pipeTo
+      ? (/** @type { string | Buffer } */ chunk) => this.pipeTo.write(pay.body += chunk)
+      : (/** @type { string | Buffer } */ chunk) => pay.body += chunk
+
     for await (const chunk of rs)
-      pay.body += chunk
+      write(chunk)
 
     if (is('json', pay.headers) && pay.body.length) {
       try {

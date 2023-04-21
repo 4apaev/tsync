@@ -1,3 +1,8 @@
+import Pt from 'node:path'
+import Fs from 'node:fs/promises'
+import { createWriteStream } from 'node:fs'
+import Crypto from 'node:crypto'
+
 import {
   strictEqual as equal,
   deepStrictEqual as eqDeep,
@@ -167,22 +172,42 @@ describe('Sync', () => {
     })
   })
 
-  it('should fail on JSON.parse due SyntaxError', async () => {
-    await rejects(async () => {
-      await Sync.get('/json-fail')
+  describe('Streams', () => {
+    it('should fail on JSON.parse due SyntaxError', async () => {
+      await rejects(async () => {
+        await Sync.get('/json-fail')
+      })
+    })
+
+    it(`should send body as stream`, async () => {
+      const body = 'SHOSHANA!'
+      const readable = Readable.from((async function* (it, i = 10) {
+        for (const ch of it)
+          yield await sleep(ch, random(i += 10))
+      })(body))
+
+      const re = await Sync.post('/', readable)
+      equal(200, re.code)
+      equal(body, re.body.body)
+    })
+
+    it(`should pipe responce to specified file`, async () => {
+      const path = Pt.join(process.env.TMPDIR, Crypto.randomUUID())
+      const re = await Sync.get('/').pipe(path)
+      const file = await Fs.readFile(path)
+
+      equal(200, re.code)
+      equal(file.toString('utf-8'), JSON.stringify(re.body, 0, 2))
+    })
+
+    it(`should pipe responce to writable stream`, async () => {
+      const path = Pt.join(process.env.TMPDIR, Crypto.randomUUID())
+      const re = await Sync.get('/').pipe(createWriteStream(path))
+      const file = await Fs.readFile(path)
+
+      equal(200, re.code)
+      equal(file.toString('utf-8'), JSON.stringify(re.body, 0, 2))
     })
   })
 
-  it(`should send body as stream`, async () => {
-    const body = 'SHOSHANA!'
-    const readable = Readable.from((async function* (it, i = 10) {
-      for (const ch of it)
-        yield await sleep(ch, random(i += 10))
-    })(body))
-
-    const re = await Sync.post('/', readable)
-    equal(200, re.code)
-    equal(body, re.body.body)
-
-  })
 })
