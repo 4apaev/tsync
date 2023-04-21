@@ -3,13 +3,11 @@
   "author"  : "Michael Miretsky",
   "version" : "2.0.1",
   "type"    : "module",
-  "files"   : [
-      "src/base.js",
-      "src/fetch.js",
-      "src/sync.js",
-      "src/util.js"
-    ],
-  "repository": { "type": "git", "url": "git@github.com:4apaev/tsync.git" },
+
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:4apaev/tsync.git"
+  },
   "scripts": {
     "mocha"  : "mocha test/*.spec.js",
     "test"   : "c8 --check-coverage mocha",
@@ -21,6 +19,6 @@
              "c8": "^7.13.0",
           "mocha": "^10.2.0",
          "eslint": "^8.38.0",
-    "@types/node": "^18.15.11"
+    "@types/node": "^18.15.12"
   }
 }
