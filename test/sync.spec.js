@@ -1,5 +1,7 @@
 import Pt from 'node:path'
 import Fs from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+
 import { createWriteStream } from 'node:fs'
 import Crypto from 'node:crypto'
 
@@ -192,7 +194,7 @@ describe('Sync', () => {
     })
 
     it(`should pipe responce to specified file`, async () => {
-      const path = Pt.join(process.env.TMPDIR, Crypto.randomUUID())
+      const path = Pt.join(tmpdir(), Crypto.randomUUID())
       const re = await Sync.get('/').pipe(path)
       const file = await Fs.readFile(path)
 
@@ -201,7 +203,7 @@ describe('Sync', () => {
     })
 
     it(`should pipe responce to writable stream`, async () => {
-      const path = Pt.join(process.env.TMPDIR, Crypto.randomUUID())
+      const path = Pt.join(tmpdir(), Crypto.randomUUID())
       const re = await Sync.get('/').pipe(createWriteStream(path))
       const file = await Fs.readFile(path)
 
