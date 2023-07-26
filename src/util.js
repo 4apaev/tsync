@@ -1,6 +1,6 @@
 // @ts-check
 
-import { MT as mime } from '../scripts/mime.types.js'
+import mime from '../scripts/mime.types.js'
 
 const CT = 'Content-Type'
 const ct = 'content-type'
@@ -79,11 +79,11 @@ export function is(expected, actual) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @template T, C
- * @param   { Dict | Headers | URLSearchParams | Map | Set } it
- * @param   { (k: string, v: T) => void } cb
- * @param   { C } ctx
- * @returns { C }
+ * @template K, T, C
+ * @param  { T | T[] | IterableIterator<[ K, T ]> } it
+ * @param  { (k: K, v: T) => void } cb
+ * @param  { C } [ctx]
+ * @return { C }
  */
 export function each(it, cb, ctx) {
                          // @ts-ignore
