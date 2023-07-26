@@ -11,6 +11,6 @@
     "allowJs"                     : true,
     "pretty"                      : true,
   },
-  "include": [ "src" ],
-  "exclude": [ "test", "dist", "scripts" ],
+  "include": [ "src", "scripts" ],
+  "exclude": [ "test", "dist" ],
 }
