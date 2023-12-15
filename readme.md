@@ -1,4 +1,4 @@
-TSYNC
+TSync
 =====
 
 TSync is a simple utility
